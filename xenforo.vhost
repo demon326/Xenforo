@@ -1,7 +1,13 @@
-location /xen/ {
-        try_files $uri $uri/ /xen/index.php?$uri&$args;
+location /{
+        try_files $uri $uri/ /index.php?$uri&$args;
         index index.php index.html;
-        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+   }
+#############
+Xenforo internal data
+#############
+location ~ ^/(internal_data|library|src|install)/(.*)$ {
+internal;
+}
 
 ## All static files will be served directly.
     location ~* ^.+\.(?:css|cur|js|jpe?g|gif|htc|ico|png|html|xml|otf|ttf|eot|woff|svg)$ {
@@ -17,19 +23,15 @@ location /xen/ {
         open_file_cache_min_uses 2;
         open_file_cache_errors off;
     }
-
-
-}
-
-location /xen/install/data/ {
-        internal;
-}
-location /xen/install/templates/ {
-        internal;
-}
-location /xen/internal_data/ {
-        internal;
-}
-location /xen/library/ {
-        internal;
+         location ~ \.php$ {
+          try_files $uri =404;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            include /etc/nginx/fastcgi_params;
+            include /etc/nginx/php-common.conf;
+            #include /etc/nginx/microcache.conf;
+            add_header X-Cache-Status $upstream_cache_status;
+            fastcgi_pass unix:/run/php/php7.0-fpm-web2.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_intercept_errors on;
 }
