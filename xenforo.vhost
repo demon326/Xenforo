@@ -30,7 +30,7 @@ internal;
             include /etc/nginx/php-common.conf;
             #include /etc/nginx/microcache.conf;
             add_header X-Cache-Status $upstream_cache_status;
-            fastcgi_pass unix:/run/php/php7.0-fpm-web2.sock;
+            fastcgi_pass unix:/run/php/php7.0-fpm.sock;
             fastcgi_index index.php;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             fastcgi_intercept_errors on;
